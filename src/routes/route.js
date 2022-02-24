@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// QUERY PARAMS
+/*// QUERY PARAMS
 // localhost:3000/get-query-1?myCoolVar=24&xyz=hiFunctionUP
 router.get("/get-query-1", function (req, res) {
     let data = req.query
@@ -42,6 +42,47 @@ router.post("/post-query-2", function (req, res) {
     // }
     res.send({ result: finalArr , status: true })
 })
+ */
+let persons= [
+        {
+        name: "PK",
+        age: 10,
+        votingStatus: false
+     },
+    {
+        name: "SK",
+        age: 20,
+         votingStatus: false
+    },
+     {
+         name: "AA",
+        age: 70,
+        votingStatus: false
+     },
+     {
+       name: "SC",
+         age: 5,
+         votingStatus: false
+     },
+     {
+         name: "HO",
+         age: 40,
+         votingStatus: false
+     }
+ ]
+    
+router.post("/voters",function (req, res) {
+    let validVotingAge=req.query.validVotingAge
+    for(let i=0;i<persons.length;i++){
+        
+        persons[i].votingStatus=true
+}
+    console.log(persons)
+    let x=persons.filter(ele=>ele.age>validVotingAge)
+    console.log(x)
+    return res.send(x)
+})
+ module.exports=router;
 
 
 // ASSIGNMENT:
@@ -82,4 +123,3 @@ router.post("/post-query-2", function (req, res) {
 
 
 
-module.exports = router;
