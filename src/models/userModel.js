@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+/*const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema( {
     firstName: String,
     lastName: String,
@@ -22,10 +21,15 @@ const userSchema = new mongoose.Schema( {
     // },
     // cars: [ String  ]
 }, { timestamps: true });
-
 module.exports = mongoose.model('User', userSchema) //users
-
-
-
 // String, Number
-// Boolean, Object/json, array
+// Boolean, Object/json, array */
+
+const mongoose = require('mongoose');
+const bookSchema = new mongoose.Schema({
+    bookName:String ,
+    authorName:String,
+    Category:String,
+     year :Number, 
+ }, {timestamps:true });
+ module.exports = mongoose.model('Book', bookSchema)
