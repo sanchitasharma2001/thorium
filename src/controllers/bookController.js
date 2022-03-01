@@ -59,4 +59,4 @@ module.exports .createBook= createBook
 module.exports.createAuthor= createAuthor
 module.exports .bookList= bookList
 module.exports.updateBookPrice=updateBookPrice
-module.exports.Books= Books
+module.exports.Books=Books
