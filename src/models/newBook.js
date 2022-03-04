@@ -6,13 +6,17 @@ const bookSchema = new mongoose.Schema( {
         type:ObjectId,
          ref:"newAuthor"
     },
+    
     name: String,
     price: Number,
     ratings: Number,
+    Publisher:String,
     Publisher_id:{
         type:ObjectId,
         ref:"newPublisher"
-    }
+    },
+    isHardcover:String
+
 }, { timestamps: true });
 
 
