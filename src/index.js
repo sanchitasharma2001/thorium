@@ -8,13 +8,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-mongoose.connect("mongodb+srv://functionup-cohort:G0Loxqc9wFEGyEeJ@cluster0.rzotr.mongodb.net/Pritesh8769811-DB?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://functionup-cohort:G0Loxqc9wFEGyEeJ@cluster0.rzotr.mongodb.net/Sanchita79864-DB?retryWrites=true&w=majority", {
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected"))
 .catch ( err => console.log(err) )
 
-let globalMiddleware = function(req, res, next){
+/*let globalMiddleware = function(req, res, next){
     let currentDate = new Date()
     console.log('Before adding custom header '+JSON.stringify(req.headers))
     let contentTypeHeader = req.headers["content-type"]
@@ -40,9 +40,9 @@ let globalMiddleware = function(req, res, next){
     
     console.log(result)
     next()
-}
+ } */
 
-app.use(globalMiddleware)
+//app.use(globalMiddleware)
 app.use('/', route)
 
 
