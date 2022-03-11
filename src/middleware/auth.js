@@ -38,7 +38,6 @@ const tokenChecker = function (req, res, next) {
         let decodedToken = jwt.verify(token, "functionup-thorium")
         if (decodedToken.userId === req.params.userId) {
             next()
-
         } else {return res.send("Unauthorised user")
     }
 }
