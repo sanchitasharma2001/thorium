@@ -42,32 +42,20 @@ const createBook = async function (req, res) {
 // -- ALL GOOD... //status(200)- OK
 // --- "ALL GOOD and A NEW RESOURCE WAS SUCCEFULLY CREATED" ...status(201)..e.g a new user registers herself successfully
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const getBooksData = async function (req, res) {
+    try{
     let allBooks = await BookModel.find({ authorName: "HO" })
     console.log(allBooks)
     if (allBooks.length > 0) res.send({ msg: allBooks, condition: true })
     else res.send({ msg: "No books found", condition: false })
 }
-
-
+catch (err) {
+    console.log("This is the error :", err.message)
+    res.status(500).send({ msg: "Error", error: err.message })
+}
+}
 const updateBooks = async function (req, res) {
+    try{
     let data = req.body // {sales: "1200"}
     // let allBooks= await BookModel.updateMany( 
     //     { author: "SK"} , //condition
@@ -80,9 +68,15 @@ const updateBooks = async function (req, res) {
     )
 
     res.send({ msg: allBooks })
+     } catch (err) {
+        console.log("This is the error :", err.message)
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
+
 }
 
 const deleteBooks = async function (req, res) {
+    try{
     // let data = req.body 
     let allBooks = await BookModel.updateMany(
         { authorName: "FI" }, //condition
@@ -91,6 +85,11 @@ const deleteBooks = async function (req, res) {
     )
 
     res.send({ msg: allBooks })
+    }
+    catch (err) {
+        console.log("This is the error :", err.message)
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
 }
 
 
