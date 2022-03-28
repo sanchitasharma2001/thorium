@@ -41,7 +41,7 @@ const createUser = async function (req, res) {
         if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
             return res.status(400).send({ status: false, message: "Email is not valid. Please provide a valid email" })
         }
-        const isEmailalreadyExist = await userModel.findOne({ email })
+        const isEmailalreadyExist = await userModel.findOne({ email:email })
         if (isEmailalreadyExist) {
             return res.status(200).send({ status: false, message: "Email already exists" })
         }
@@ -72,7 +72,7 @@ const loginUser = async function (req, res) {
         if (!validations.isValid(password)) {
             return res.status(400).send({ status: false, message: "Password is required" })
         }
-        const user=await userModel.findOne({email, password})
+        const user=await userModel.findOne({email:email, password:password})
         if(!user) {
             return res.status(400).send({ status: false, message: "Invalid login credentials"})
         }
