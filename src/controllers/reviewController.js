@@ -57,11 +57,11 @@ const updateReview = async (req, res) => {
     try {
         let update = {}
 
-        if (!validations.isValid(req.params.bookId) && !validations.isValidObjectId(req.params.bookId)) {
+        if (!(validations.isValid(req.params.bookId) && !validations.isValidObjectId(req.params.bookId))) {
             return res.status(400).send({ status: false, msg: "BookId is not valid" })
         }
 
-        if (!validations.isValid(req.params.reviewId) &&  !validations.isValidObjectId(req.params.reviewId)) {
+        if (!(validations.isValid(req.params.reviewId) &&  validations.isValidObjectId(req.params.reviewId))) {
             return res.status(400).send({ status: false, msg: "ReviewId is not valid" })
         }
 
@@ -83,7 +83,7 @@ const updateReview = async (req, res) => {
 
         let { reviewedBy, rating, review } = req.body
         if (reviewedBy) {
-            if (!isValid(reviewedBy)) {
+            if (!validations.isValid(reviewedBy)) {
                 return res.status(400).send({ status: false, message: 'ReviewedAt is not valid value ' })
             }
             update["reviewedBy"] = reviewedBy

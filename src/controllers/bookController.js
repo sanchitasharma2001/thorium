@@ -113,7 +113,7 @@ const getBook = async (req, res) => {
 //-----------------------------------------------------------------------------------------------------------------
 const getBooksById= async (req, res) => {
     try{
-        if (!validations.isValid(req.params.bookId) && !validations.isValidObjectId(req.params.bookId)) {
+        if (!(validations.isValid(req.params.bookId) && validations.isValidObjectId(req.params.bookId))) {
             return res.status(400).send({ status: false, msg: "bookId is not valid" })
     }
     let books = await bookModel.findOne({ _id: req.params.bookId, isDeleted: false })
@@ -154,6 +154,11 @@ const updateBookById = async (req, res) => {
                if (!validations.isValid(title)) {
                 return res.status(400).send({ status: false, message: 'title is not valid or empty' })
             }
+            let titleCheck = await bookModel.findOne({ title: title })
+                if(titleCheck){
+                    return res.status(400).send({ status:false, message: `Title is already present`})
+                }
+            
             update['title'] = title
         }
         if (excerpt) {
@@ -166,6 +171,10 @@ const updateBookById = async (req, res) => {
                 if (!validations.isValid(ISBN)) {
                 return res.status(400).send({ status: false, message: 'ISBN is not valid ' })
             }
+            let ISBNCheck = await bookModel.findOne({ ISBN: ISBN })
+                if(ISBNCheck){
+                    return res.status(400).send({ status:false, message: `ISBN is already present`})
+                }
             update['ISBN'] = ISBN
         }
         if (releasedAt) {
@@ -192,7 +201,7 @@ const updateBookById = async (req, res) => {
 const deleteById = async (req, res) => {
     try {
          let id = req.params.bookId
-        if (!validations.isValid(req.params.bookId) && ! validations.isValidObjectId(req.params.bookId)) {
+        if (!(validations.isValid(req.params.bookId) &&  validations.isValidObjectId(req.params.bookId))) {
             return res.status(400).send({ status: false, msg: "bookId is not valid" })
         }
         let filter = {
