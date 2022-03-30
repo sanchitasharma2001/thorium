@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const userModel = require('../models/userModel')
 const validations = require('../validations/validator')
+const jwt=require('jsonwebtoken');
+
 
 const isValidTitle = function (title) {
     return ["Mr", "Miss", "Mrs"].indexOf(title) !== -1
@@ -9,14 +11,22 @@ const createUser = async function (req, res) {
     try {
 
         if (!validations.isValidRequestBody(req.body)) {
-            return res.status(400).send({ status: false, message: "Parameters in the request body are not valid.Plese enter valid parameters" })
+            return res.status(400).send({ status: false, message: "Body is empty.Please provide valid parameters " })
         }
+
+        // deconstruction for validations
         let { title, name, phone, email, password } = req.body
         if (!validations.isValid(title)) {
             return res.status(400).send({ status: false, message: "Title is required" })
         }
         if (!isValidTitle(title)) {
             return res.status(400).send({ status: false, message: "Title must be among Mr,Mrs,Miss" })
+        }
+
+        if(!validations.isValid(title))
+        {
+            return res.status(400).send({ status: false, message: "Title is required" })
+           
         }
 
         if (!validations.isValid(name)) {
@@ -31,7 +41,7 @@ const createUser = async function (req, res) {
         if (!/^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone)) {
             return res.status(400).send({ status: false, message: `${phone} is not a valid phone number` })
         }
-        const isPhonealreadyExist = await userModel.findOne({ phone })
+        const isPhonealreadyExist = await userModel.findOne({ phone:phone })
         if (isPhonealreadyExist) {
             return res.status(400).send({ status: false, message: `${phone} Phone number already exists` })
         }
@@ -45,10 +55,15 @@ const createUser = async function (req, res) {
         if (isEmailalreadyExist) {
             return res.status(200).send({ status: false, message: "Email already exists" })
         }
-        if (!validations.isValid(password)) {
-            return res.status(400).send({ status: false, message: "Password is required" })
+        // if (!validations.isValid(password)) {
+        //     return res.status(400).send({ status: false, message: "Password is required" })
+        // }
+       
+        if(!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password))){
+            return res.status(400).send({status:false,msg:"Password is between 7 and 16"})
         }
-        if (!validations.isValid(password.trim().lenght >= 8 || password.trim().length <= 15)) {
+        
+        if (!validations.isValid(password.trim().lenght >= 8 && password.trim().length <= 15)) {
             res.status(400).send({ status: false, message: "Please enter a password of at least 8 characters but less than 16 characters" })
         }
         let savedUser = await userModel.create(req.body)
@@ -59,6 +74,8 @@ const createUser = async function (req, res) {
         return res.status(500).send({ status: false, error: err.message })
     }
 }
+
+//token  send 
 const loginUser = async function (req, res) {
     try {
         const requestBody = req.body
@@ -74,17 +91,20 @@ const loginUser = async function (req, res) {
         }
         const user=await userModel.findOne({email:email, password:password})
         if(!user) {
-            return res.status(400).send({ status: false, message: "Invalid login credentials"})
+            return res.status(400).send({ status: false, message: "Invalid login credentials or email and password is incorrect "})
         }
         let token = await jwt.sign(
             {
                 userId: user._id.toString(),
                 batch:"thorium",
-                organisation:"Function"
+                organisation:"Function",
+                iat: Date.now(), // time 
+                expiry: Date.now() + 10*60*60 //expiry 30 min so 1800s
+    
             },
             "Group20"
         )
-        res.setHeader("x-api-key",token);
+        res.setHeader["x-api-key",token];
         res.status(200).send({status: true, message:"User login successful",data:(token)})
     } catch (err) {
         return res.status(400).send({ status: false, error: err.message })
