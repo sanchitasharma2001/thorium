@@ -33,7 +33,7 @@ const bookSchema=new mongoose.Schema({
         required:"Subcategory is required",
         trim:true
     },
-    reviews: { // ref and pop use krna hai 
+    reviews: { 
         type:Number,
         default:0,
         trim:true
@@ -48,7 +48,7 @@ const bookSchema=new mongoose.Schema({
     },
     //{Date, mandatory, format("YYYY-MM-DD")}
     releasedAt:{
-        type:Date,//iska format lena hai 
+        type:Date,
         required:"Date is required",
         trim:true
     }

@@ -21,11 +21,6 @@ const createUser = async function (req, res) {
         }
         if (!isValidTitle(title)) {
             return res.status(400).send({ status: false, message: "Title must be among Mr,Mrs,Miss" })
-        }
-
-        if(!validations.isValid(title))
-        {
-            return res.status(400).send({ status: false, message: "Title is required" })
            
         }
 
@@ -62,10 +57,7 @@ const createUser = async function (req, res) {
         if(!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password))){
             return res.status(400).send({status:false,msg:"Password is between 7 and 16"})
         }
-        
-        if (!validations.isValid(password.trim().lenght >= 8 && password.trim().length <= 15)) {
-            res.status(400).send({ status: false, message: "Please enter a password of at least 8 characters but less than 16 characters" })
-        }
+    
         let savedUser = await userModel.create(req.body)
         return res.status(201).send({ status: true, message: "Successfully created", data: savedUser })
 

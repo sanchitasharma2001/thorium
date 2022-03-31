@@ -6,7 +6,7 @@ const validations=require("../validations/validator")
 
 const addReview = async (req, res) => {
     try {
-        if (!validations.isValid(req.params.bookId) && validations.isValidObjectId(req.params.bookId)) {
+        if (!(validations.isValid(req.params.bookId) && validations.isValidObjectId(req.params.bookId))) {
             return res.status(400).send({ status: false, msg: "BookId is not valid" })
         }
         if (!validations.isValidRequestBody(req.body)) {
@@ -15,7 +15,7 @@ const addReview = async (req, res) => {
         }
         let { reviewedBy, rating, review } = req.body
         if (!validations.isValid(review)) {
-            return res.status(400).send({ status: false, message: 'Reviewe is not valid' })
+            return res.status(400).send({ status: false, message: 'Review is not valid' })
         }
         if (!validations.isValid(rating)) {
             return res.status(400).send({ status: false, message: 'Rating is not valid' })
@@ -34,7 +34,7 @@ const addReview = async (req, res) => {
             let review = await reviewModel.create(req.body)
 
             let ReviewCount = await reviewModel.find({ bookId: req.params.bookId }).count()
-            console.log(ReviewCount)
+
 
             let countUpdate = await bookModel.findOneAndUpdate({ _id: req.params.bookId }, { reviews: ReviewCount })
 
@@ -44,8 +44,7 @@ const addReview = async (req, res) => {
             return res.status(404).send({ status: true, msg: "No such book exist to be review" })
         }
     } catch (err) {
-        console.log(err)
-        res.status(500).send({ status: false, error: err.message })
+       return res.status(500).send({ status: false, error: err.message })
 
     }
 }
@@ -57,7 +56,7 @@ const updateReview = async (req, res) => {
     try {
         let update = {}
 
-        if (!(validations.isValid(req.params.bookId) && !validations.isValidObjectId(req.params.bookId))) {
+        if (!(validations.isValid(req.params.bookId) && validations.isValidObjectId(req.params.bookId))) {
             return res.status(400).send({ status: false, msg: "BookId is not valid" })
         }
 
@@ -107,9 +106,7 @@ const updateReview = async (req, res) => {
 
 
     } catch (err) {
-
-        console.log(err)
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, error: err.message })
     }
 }
 

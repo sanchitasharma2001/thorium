@@ -9,14 +9,13 @@ const createBook=async function(req, res) {
         
             let { title, excerpt, userId ,ISBN ,category,subCategory,reviews,isDeleted,releasedAt} = req.body
         
-         const titlee = await bookModel.findOne({title:title})
+       if (!validations.isValid(title)) 
+        return res.status(400).send({ status: false, message: `title is required` })
+        const titlee = await bookModel.findOne({title:title})
         if(titlee)
         {
             return res.status(400).send({ status:false, message: 'Title already exists'})
         }
-        
-        if (!validations.isValid(title)) 
-        return res.status(400).send({ status: false, message: `title is required` })
 
         if (!validations.isValid(excerpt)) {
         return res.status(400).send({ status: false, message: `excerpt is required` })
@@ -191,8 +190,7 @@ const updateBookById = async (req, res) => {
         }
 
     } catch (err) {
-        console.log(err)
-        res.status(500).send({ status: false, error: err.message })
+       return res.status(500).send({ status: false, error: err.message })
     }
 }
 
