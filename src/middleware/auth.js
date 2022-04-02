@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel')
 const bookModel = require('../models/bookModel');
 const validations = require('../validations/validator.js');
-const verify = require('jsonwebtoken/verify');
+//const verify = require('jsonwebtoken/verify');
 let authorise = async function (req, res, next) {
     try {
 
