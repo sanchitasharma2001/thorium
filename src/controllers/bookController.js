@@ -1,5 +1,7 @@
 const bookModel =require('../models/bookModel')
 const userModel = require('../models/userModel')
+const removeUploadedFiles=require('multer/lib/remove-uploaded-files');
+const aws = require('aws-sdk');
 const reviewModel= require('../models/reviewModel')
 const validations = require('../validations/validator.js')
 const createBook=async function(req, res) {
@@ -7,7 +9,7 @@ const createBook=async function(req, res) {
         if (!validations.isValidRequestBody(req.body)) 
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide valid details' })
         
-            let { title, excerpt, userId ,ISBN ,category,subCategory,reviews,isDeleted,releasedAt} = req.body
+            let { title, excerpt, userId ,ISBN ,category,subCategory,reviews,isDeleted,releasedAt,bookCover} = req.body
         
        if (!validations.isValid(title)) 
         return res.status(400).send({ status: false, message: `title is required` })
@@ -51,8 +53,14 @@ const createBook=async function(req, res) {
         if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
             return res.status(400).send({ status: false, message: ' \"YYYY-MM-DD\" this Date format & only number format is accepted ' })
         }
+        if(!validations.isValid(bookCover)){
+        return res.status(400).send({ status: false, message:'Please provide BookCover'})
+        }
+        if(!/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(bookCover))
+         return res.status(400).send({ status: false, message:'Please provide valid BookCover'})
+    
         const bookData = {
-            title, excerpt,userId,ISBN,category, subCategory, reviews, releasedAt,
+            title, excerpt,userId,ISBN,category, subCategory, reviews, releasedAt,bookCover,
             isDeleted: isDeleted ? isDeleted : false,
              deletedAt: isDeleted ? new Date() : null
         }
@@ -220,6 +228,45 @@ const deleteById = async (req, res) => {
         return res.status(500).send({ status: false, error: err.message })
     }
 }
+//-------------------------------------------------------------------------------------
+aws.config.update({
+     accessKeyId: "AKIAY3L35MCRVFM24Q7U",  // id
+     secretAccessKey: "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",  // secret password
+     region: "ap-south-1" 
+     });
+const uploadFile = async (file)=>{
+    return new Promise(function(resolve,reject){
+        let s3=new aws.S3({apiVersion:"2006-o3-01"})
+        var uploadParams = {
+            ACL:"public-read", 
+            Bucket:"classroom-training-bucket",
+            Key:"mySubFolder/"+file.originalname,
+            Body:file.buffer
+        }
+        s3.upload(uploadParams,function (err,data){
+            if(err){return reject ({"error":err})}
+            console.log("file uploaded successfully")
+            return resolve(data.Location)
+        })
+    }
+    )
+}
+let writeFile = async function(req,res){
+    try{
+        let files = req.files
+        if(files && files.length>0){
+            let uploadedFilesURL = await uploadFile(files[0])
+            res.status(201).send({msg:"file uploaded successfully",data : uploadedFilesURL})
+        }
+        else{res.status(400).send({msg:"no file found"})
+    } 
+        }  
+     catch(err){return res.status (500).send({msg:err})}
+}
+
+
+
+module.exports.writeFile = writeFile
 module.exports.createBook = createBook
 module.exports.getBook = getBook
 module.exports.getBooksById= getBooksById

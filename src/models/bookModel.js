@@ -7,6 +7,7 @@ const bookSchema=new mongoose.Schema({
         unique:true,
         trim:true
     }, 
+    
     excerpt: {
        type:String, 
        required:"Excerpt is required",
@@ -51,6 +52,11 @@ const bookSchema=new mongoose.Schema({
         type:Date,
         required:"Date is required",
         trim:true
-    }
+    },
+    bookCover: {
+        type:String,
+        required:"Book cover is required"
+    },
+
     },{timestamps:true})
     module.exports =mongoose.model("Book",bookSchema)

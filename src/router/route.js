@@ -1,4 +1,5 @@
 const express = require('express');
+const removeUploadedFiles=require('multer/lib/remove-uploaded-files');
 const router = express.Router();
 const bookController=require("../controllers/bookController")
 const reviewController=require("../controllers/reviewController")
@@ -9,10 +10,10 @@ const middleware = require("../middleware/auth")
 router.post("/createUser",userController.createUser)
 router.post("/loginUser",userController.loginUser)
 //createBook 
+router.post('/write-file-aws',bookController.writeFile)
 router.post("/createBook",middleware.authorise,bookController.createBook)
-router.get("/getBook",bookController.getBook)
+router.get("/getBook",middleware.authorise,bookController.getBook)
 router.get("/books/:bookId",middleware.authorise,bookController.getBooksById)
-
 router.put("/books/:bookId",middleware.authorise,bookController.updateBookById)
 router.delete("/books/:bookId",middleware.authorise,bookController.deleteById)
 
