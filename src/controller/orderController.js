@@ -36,6 +36,7 @@ const upadateOrder = async function (req, res) {
     try{
       let userId = req.params.userId;
       let orderId = req.body.orderId;
+      let status = req.body.status
     
       if (!(validator.isValid(userId) && validator.isValidObjectId(userId))) {
         return res
@@ -65,7 +66,7 @@ const upadateOrder = async function (req, res) {
           .status(400)
           .send({ status: false, message: "User is not utherized to do changes" });
       }
-      if (findOrder.cancellable == true && findOrder.status == "pending") {
+      if (findOrder.cancellable == true && findOrder.status == "pending" && status  == "cancled" ) {
         const updateOrder = await orderModel.findOneAndUpdate(
           { _id: orderId },
           { $set: { status: "cancled" } },
@@ -78,17 +79,29 @@ const upadateOrder = async function (req, res) {
             message: "Succesfully Cancled Order",
             data: updateOrder,
           });
+      } 
+
+      if ( findOrder.status == "pending" && status  == "completed" ) {
+        const updateOrder = await orderModel.findOneAndUpdate(
+          { _id: orderId },
+          { $set: { status: "completed" } },
+          { new: true }
+        );
+        return res
+          .status(200)
+          .send({
+            status: false,
+            message: "Order Succesfully completed",
+            data: updateOrder,
+          });
+
       }
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "order is not canclable",
-      });
+
+      return res.status(400).send({status : false, message : 'please enter status or valid order details '})
+
     }catch(error){
       return res.status(500).send({status: false, message: error.message})
     }
 };
-
 module.exports.postOrder = postOrder
 module.exports.upadateOrder = upadateOrder
