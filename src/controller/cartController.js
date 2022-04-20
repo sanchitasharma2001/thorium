@@ -145,6 +145,47 @@ const updateCart = async (req, res) => {
                 Data: updateProduct
             })
         }
+        if (removeProduct == 0) { // we have to handle cartId authorization
+
+
+            await cartModel.updateOne(
+                { "items.productId": productId },
+                { $pull: { "items": { productId: productId } } },
+            )
+            const updateProduct = await cartModel.findByIdAndUpdate({ _id: cartId },
+                { $inc: { totalItems: -1, totalPrice: - totalPriceOfSelectedProduct } },
+                { new: true })
+            return res.status(200).send({
+                statu: true,
+                message: `This ${productId} Product Has Removed Successfully`,
+                Data: updateProduct
+            })
+        }
+        if (removeProduct == 0)  {
+            for (let i = 0; i < getCart.items.length; i++) {
+                if (getCart.items[i].productId == productId) {
+                    const priceUpdate = getCart.totalPrice - getProduct.price
+                    getCart.items[i].quantity = 0  // check if quantity is more than 1
+                   
+                    if (getCart.items[i].quantity > 0) {
+                        const response = await cartModel.findOneAndUpdate({ _id: cartId },
+                             { items: getCart.items, totalPrice: priceUpdate },
+                              { new: true })
+                        return res.status(200).send({ status: true, data: response })
+                    }
+                    else {
+                        const totalItems1 = getCart.totalItems  // to remove the Product from items
+                        getCart.items.splice(i, 1)
+                        const response = await cartModel.findOneAndUpdate({ _id: cartId },
+                             { items: getCart.items, totalItems: totalItems1, totalPrice: priceUpdate }, { new: true })
+                        return res.status(200).send({ status: true, data: response })
+                    }
+                } else {
+                    return res.status(404).send({ status: false, message: `product doesnot exist` })
+                }
+            }
+            
+        }
         if (removeProduct == 1)  {
             for (let i = 0; i < getCart.items.length; i++) {
                 if (getCart.items[i].productId == productId) {
