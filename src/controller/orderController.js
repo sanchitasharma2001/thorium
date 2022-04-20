@@ -31,7 +31,6 @@ const postOrder = async (req, res) => {
         return res.status(500).send({status: false, message: error.message})
     }
 }
-
 const upadateOrder = async function (req, res) {
     try{
       let userId = req.params.userId;
@@ -103,5 +102,7 @@ const upadateOrder = async function (req, res) {
       return res.status(500).send({status: false, message: error.message})
     }
 };
+
+
 module.exports.postOrder = postOrder
 module.exports.upadateOrder = upadateOrder
